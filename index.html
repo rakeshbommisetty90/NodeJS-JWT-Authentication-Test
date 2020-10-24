@@ -69,11 +69,6 @@
 
     function getDashboard(title, url)
     {
-
-        var current_time = Date.now() / 1000;
-         if  ( 'jwtToken' < current_time) {
-        console.log('It is expired.');
-        }
         
         if (typeof (history.pushState) != "undefined") {
         var obj = { Title: title, Url: url };
@@ -84,8 +79,6 @@
 
         const token = localStorage.getItem('jwtToken');
 
-        if(isAuthenticated())
-        {
         axios.get('/api/dashboard',{
             headers:{
                 'Authorization': `Bearer ${token}`
@@ -97,10 +90,6 @@
                 document.querySelector('main').innerHTML = res.data.myContent;
             }
         });
-        }
-        else{
-            document.location.href="/";
-        }
 
     }
 
@@ -115,9 +104,7 @@
         }
    
         const token = localStorage.getItem('jwtToken');
-        
-        if(isAuthenticated())
-        {
+
         axios.get('/api/settings',{
             headers:{
                 'Authorization': `Bearer ${token}`
@@ -129,11 +116,6 @@
                 document.querySelector('main').innerHTML = res.data.myContent;
             }
         });
-        }
-        else
-        {
-            document.location.href="/";
-        }
     }
 
 /*    function onLoad()
@@ -146,31 +128,29 @@
     }
     onLoad();   */
 
-
-    function isAuthenticated() {
-            const token = localStorage.getItem('jwtToken');
-            try {
-                console.log(parseJwt(token));
-                const { exp } = parseJwt(token);
-                console.log(exp);
-                if (Date.now() >= exp * 1000) {
-                    return false;
-                }
-            } catch (err) {
-                return false;
-            }
-            return true;
-    }
-
     function parseJwt(token){
             try {
                 return JSON.parse(atob(token.split('.')[1]));
             } catch (e) {
                 return null;
             }
+    
+};
+    function checkIfExpired(){
+        let token=localStorage.getItem('jwtToken');
+        if(token){
+            let jwttoken=tokenParse(token);
+            if(Date.now() <= jwttoken.exp *1000){    
+                return true;
+            }
+                else{
+                window.location.href="/";
+            }
+        }
     }
-
-
+    setInterval(()=>{
+        checkIfExpired();
+    },60000)
 
 
 

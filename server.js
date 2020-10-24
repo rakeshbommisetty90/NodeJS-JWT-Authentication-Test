@@ -30,7 +30,7 @@ const jwtMW = exjwt({
 
 
 
-let users = [
+var users = [
 {
     id : 1,
     username:'rakesh',
@@ -82,7 +82,7 @@ app.get('/api/dashboard',jwtMW, (req,res)=>{
 app.get('/api/settings',jwtMW, (req,res)=>{
     res.json({
         success: true,
-        myContent: 'To Change your settings, Contact you Administrator'
+        myContent: 'Contact you Admin to change settings'
     });
 
 });
@@ -96,12 +96,7 @@ app.get('/api/prices',jwtMW, (req,res)=>{
 });
 
 app.get('/',(req,res) =>{
-
-    var currentTime = Date.now() / 1000;
-    if  ( 'jwtToken' < currentTime) {
-   console.log('It is expired.');
-   }
-   
+    
     res.sendFile(path.join(__dirname,'index.html'));
 });
 
